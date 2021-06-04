@@ -1,53 +1,63 @@
-class Graph():
+from collections import deque
 
-    def __init__(self):
-        self.__graph__ = {}
-
-    def add_vertex(self, v):
-        self.__graph__[v] = []
-
-    def add_edge(self, s, t):
-        self.__graph__[s].insert(0, t)
-        self.__graph__[t].insert(0, s)
-
-    def dfs(self, start):
-        search_stack = []
-        visited = set()
-
-        search_stack.append(start)
-
-        while len(search_stack) > 0:
-            if search_stack[-1] not in visited:
-                print(search_stack[-1], end=' ')
-
-                visited.add(search_stack[-1])
-
-                childrens = self.__graph__[search_stack.pop()]
-
-                search_stack.extend(childrens)
-            else:
-                search_stack.pop()
-                
 
 N, M, V = map(int, input().split())
 
-graph = Graph()
-
-inputs = []
+graph = {}
 
 for _ in range(M):
-    inputs.append(list(map(int, input().split())))
+    a, b = input().split()
+    a = int(a)
+    b = int(b)
 
-for i in inputs:
-    a, b = i
-    graph.add_vertex(a)
-    graph.add_vertex(b)
+    if a not in graph:
+        graph[a] = []
+    if b not in graph:
+        graph[b] = []
 
-for j in inputs:
-    a, b = j
-    graph.add_edge(a, b)
+    graph[a].append(b)
+    graph[b].append(a)
 
 
-print(graph.__graph__)
+# print(graph)
 
-graph.dfs(V)
+
+dfs_visited = set()
+
+def dfs(v):
+    print(v, end=' ')
+    dfs_visited.add(v)
+    
+    children = graph[v]
+    for child in sorted(children):
+        if child not in dfs_visited:
+            dfs(child)
+
+try:
+    dfs(V)
+    print()
+except:
+    pass
+
+
+bfs_visited = set()
+
+def bfs(v):
+    d = deque([v])
+    
+    while(len(d) > 0):
+        root = d.pop()
+
+        if root not in bfs_visited:
+            print(root, end=' ')
+        bfs_visited.add(root)
+
+        for child in sorted(graph[root]):
+            if child not in bfs_visited:
+                d.appendleft(child)
+
+try:
+    bfs(V)
+    print()
+except:
+    pass
