@@ -1,0 +1,68 @@
+from collections import deque
+
+
+def get_children(matrix, point):
+    operations = (
+        (0, 1),
+        (1, 0),
+        (0, -1),
+        (-1, 0)
+    )
+
+    result = []
+
+    x, y = point
+
+    for xop, yop in operations:
+        nx = x + xop
+        ny = y + yop
+
+        inside_matrix = 0 <= nx < len(matrix[0]) and 0 <= ny < len(matrix)
+
+        if inside_matrix and matrix[ny][nx] != 0:
+            result.append((nx, ny))
+    
+    return result
+
+
+def solve(matrix, N, M):
+    end = (M, N)
+    visited = set()
+    dq = deque([(0, 0)])
+    distance = []
+    for _ in range(N):
+        distance.append([0] * M)
+    
+    distance[0][0] = 1
+    visited.add((0, 0))
+
+    while len(dq) > 0:
+        current = dq.pop()
+        children = get_children(matrix, current)
+
+        x, y = current
+
+        for child in children:
+            if child == end:
+                return len(visited) + 1
+            
+            if child not in visited:
+                dq.appendleft(child)
+                visited.add(child)
+
+                cx, cy = child
+                distance[cy][cx] = distance[y][x] + 1
+    
+    return distance[-1][-1]
+
+
+
+N, M = map(int, input().split())
+
+matrix = []
+
+for _ in range(N):
+    intlist = list(map(int, list(input())))
+    matrix.append(intlist)
+
+print(solve(matrix, N, M))
