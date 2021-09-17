@@ -1,0 +1,59 @@
+from collections import deque
+
+
+def childrenof(points, point, xlen, ylen):
+    operations = (
+        (0, 1),
+        (-1, 0),
+        (0, -1),
+        (1, 0)
+    )
+
+    x, y = point
+
+    result = []
+
+    for dx, dy in operations:
+        nx = x + dx
+        ny = y + dy
+
+        inside_range = 0 <= x < xlen and 0 <= y < ylen
+
+        if inside_range and (nx, ny )in points:
+            result.append((nx, ny))
+    
+    return result
+
+
+def solve(points: set, xlen, ylen):
+    areas = 0
+
+    while 0 < len(points):
+        dq = deque([points.pop()])
+
+        while 0 < len(dq):
+            current = dq.pop()
+
+            for child in childrenof(points, current, xlen, ylen):
+                points.remove(child)
+                dq.appendleft(child)
+        
+        areas += 1
+
+    return areas
+
+
+
+
+cases = int(input())
+
+for _ in range(cases):
+    points_set = set()
+    M, N, K = map(int, input().split())
+
+    for _ in range(K):
+        x, y = map(int, input().split())
+        points_set.add((x, y))
+
+    print(solve(points_set, M, N))
+
